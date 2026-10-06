@@ -16,10 +16,11 @@ La aplicación se encuentra organizada mediante una estructura modular que separ
 | Backend | Inicio de sesión con verificación de contraseña | Pendiente |
 | Backend | Persistencia en SQLite con hash de contraseña | Implementado |
 | Frontend | Estructura de layout, Header y Footer | Implementado |
-| Frontend | Formulario de registro y llamada a la API | Pendiente |
+| Frontend | Formulario de registro y llamada a la API | Implementado |
+| Frontend | Formulario de inicio de sesión | Pendiente |
 | Frontend | Contenido principal (`Main.jsx`) | Pendiente |
 
-El backend expone únicamente el endpoint de registro. La verificación de credenciales todavía no está implementada, por lo que el enlace `Login` del menú todavía no tiene contraparte en la API.
+El backend expone el endpoint de registro y el de inicio de sesión. El formulario de registro ya consume `POST /api/Registrar`, mientras que la pantalla de login todavía no está construida.
 
 ## Tecnologías utilizadas
 
@@ -150,8 +151,9 @@ Las rutas se registran en `src/Router/Login.Route.js` y se montan en `index.js` 
 | Método | Ruta | Descripción | Controlador |
 | --- | --- | --- | --- |
 | `POST` | `/api/Registrar` | Registra un usuario nuevo | `RegistrarUsuario` |
+| `POST` | `/api/Login` | Verifica las credenciales de un usuario | `IniciarSesion` |
 
-El endpoint utiliza `POST` porque recibe datos sensibles como la contraseña, que nunca debe enviarse en la URL.
+Ambos endpoints utilizan `POST` porque reciben datos sensibles como la contraseña, que nunca debe enviarse en la URL.
 
 ### Registro de usuarios
 
@@ -162,12 +164,29 @@ El endpoint utiliza `POST` porque recibe datos sensibles como la contraseña, qu
 3. Genera el hash de la contraseña con `bcrypt` y un salto de 10 rondas.
 4. Inserta el nuevo registro.
 
-| Código | Respuesta | Causa |
+| Código | Clave | Causa |
 | --- | --- | --- |
-| `200` | `Usuario Registrado Correctamente` | Registro exitoso |
-| `404` | `Debe completar el Usuario y/o la Contraseña` | Faltan campos obligatorios |
-| `409` | `Usuario ya Registrado` | El usuario ya existe |
-| `500` | `Error en la Conexion con el Servidor` | Fallo de consulta o inserción |
+| `200` | `message` | Registro exitoso |
+| `404` | `error` | Faltan campos obligatorios |
+| `409` | `error` | El usuario ya existe |
+| `500` | `error` | Fallo de consulta o inserción |
+
+Los errores usan la clave `error` y los aciertos `message`. Cada respuesta incluye además `imagen`, que apunta a una imagen de estado publicada por Express bajo el prefijo `/status`.
+
+### Inicio de sesión
+
+`IniciarSesion` recibe el cuerpo `User` y `Password`, busca el usuario y compara la contraseña enviada contra el hash guardado con `bcrypt.compare`.
+
+| Código | Clave | Causa |
+| --- | --- | --- |
+| `200` | `mensaje` | Credenciales válidas, incluye `User` y `Name` |
+| `404` | `mensaje` | Faltan campos obligatorios |
+| `401` | `mensaje` | El usuario no existe o la contraseña es incorrecta |
+| `500` | `mensaje` | Fallo de consulta o de comparación |
+
+### Imágenes de estado
+
+`src/Utils/StatusImagen.js` relaciona cada escenario de la API con una imagen estática. El frontend las resuelve con el helper `UrlImagen` de `src/services/api.js`.
 
 ### Base de datos
 
@@ -204,7 +223,8 @@ La organización separa el componente de layout de los componentes que viven den
 | `Layouts` | `src/Components/Layouts.jsx` | Define el shell de la página y el orden de sus secciones |
 | `Header` | `src/Components/Home/Header.jsx` | Encabezado con logotipo y menú de navegación |
 | `Footer` | `src/Components/Home/Footer.jsx` | Pie de página con información del sitio, enlaces y contacto |
-| `Main` | `src/Components/Home/Main.jsx` | Contenedor del contenido principal, aún vacío |
+| `RegistroUsuario` | `src/Components/Pages/RegistroUsuario.jsx` | Formulario de alta de usuarios conectado a la API |
+| `Main` | `src/Components/Home/Main.jsx` | Formulario de inicio de sesión, aún no montado en el layout |
 
 #### Layouts
 
@@ -233,9 +253,21 @@ El contenedor aplica `min-height: 100vh` con `display: flex` y `flex-direction: 
 
 El nombre de la marca, la descripción y los datos de contacto son textos de ejemplo, al igual que los enlaces sociales, y deben reemplazarse por la información definitiva del proyecto.
 
+#### RegistroUsuario
+
+`RegistroUsuario.jsx` renderiza el formulario de alta dentro de `div.contenedorFormulario--registro`, con la imagen del proyecto a la izquierda y el formulario a la derecha. El componente mantiene el estado de los cuatro campos (`User`, `Name`, `Password` y la repetición `Password2`) y trabaja en tres etapas:
+
+1. Valida en el navegador antes de llamar al servidor: usuario y nombre obligatorios, contraseña de al menos 8 caracteres y coincidencia de las dos contraseñas.
+2. Envía `User`, `Name` y `Password` a `RegistrarUsuario` y muestra un botón en estado de espera mientras la API responde.
+3. Traduce la respuesta en el bloque `.respuesta`, reutilizando los estilos de éxito y error ya definidos en la hoja de estilos, junto con la imagen de estado que devuelve el servidor.
+
+Un `409` marca además el campo de usuario en rojo, porque el conflicto está en ese valor. Al editar el campo marcado, el error se limpia.
+
+La fuerza de la contraseña se calcula en el cliente con un medidor de cuatro segmentos que va del rojo de error al verde de éxito, y un botón permite mostrar u ocultar ambas contraseñas.
+
 #### Main
 
-`Main.jsx` es un archivo vacío placeholder. Cuando se implemente, debería renderizarse dentro de `main.contenido` en `Layouts.jsx` para ocupar la región central del layout.
+`Main.jsx` contiene el formulario de inicio de sesión, todavía sin montar en `Layouts.jsx`. Cuando se integre, debería renderizarse dentro de `main.contenido` para ocupar la región central del layout.
 
 ### Estilos
 
@@ -244,7 +276,8 @@ Todos los estilos se encuentran centralizados en `src/Components/Layouts.css`. E
 Aspectos destacables de la hoja de estilos:
 
 - Variables CSS definidas por componente para centralizar la paleta, los radios y las transiciones.
-- Paleta basada en índigo `#4f46e5` y grises slate, compartida entre el header y el footer.
+- Paleta basada en índigo `#4f46e5` y grises slate, compartida entre el header, el footer y el formulario de registro.
+- Modificadores de clase para las variantes de una tarjeta, como `.contenedorFormulario--registro`, que amplían las variables del componente base en lugar de duplicar reglas.
 - Flexbox para el layout de página, el encabezado, el menú y el pie.
 - CSS Grid para las columnas del footer.
 - encabezado fijo con `position: sticky` y efecto de desenfoque con `backdrop-filter`.

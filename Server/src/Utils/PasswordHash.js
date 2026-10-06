@@ -13,4 +13,7 @@ const EncriptarPassword=async(Password)=>{
     return await Encriptar.hash(Password,Seguridad)
 }
 
-module.exports={EncriptarPassword}
+const CompararPassword=async(Password,Hash)=>{
+    return await Encriptar.compare(Password,Hash)
+}
+module.exports={CompararPassword,EncriptarPassword}

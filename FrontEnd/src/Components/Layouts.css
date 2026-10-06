@@ -612,3 +612,561 @@ body {
     transform: none;
   }
 }
+
+.contenedorFormulario{
+  --form-accent: #4f46e5;
+  --form-text: #111827;
+  --form-muted: #6b7280;
+  --form-border: #e5e7eb;
+  --form-surface: #ffffff;
+  --form-radius: 20px;
+  --form-speed: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+
+  justify-content: space-between;
+  width: 600px;
+  max-width: 100%;
+  min-height: 450px;
+  margin: 50px auto;
+  box-shadow: 5px 8px 5px #94a3b8;
+  border-radius: var(--form-radius);
+
+  background: var(--form-surface);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --> Solo la imagen decorativa de la izquierda, no la imagen de respuesta */
+.contenedorFormulario > .formulario-imagen{
+  flex: 0 0 auto;
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: var(--form-radius);
+  border-bottom-left-radius: var(--form-radius);
+}
+
+.formLogin{
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+  padding: 30px;
+}
+
+.formLogin h1{
+  font-size: 40px;
+  text-align: center;
+  color: var(--form-text);
+  margin: 0 0 20px;
+}
+
+.formLogin label{
+  margin: 5px 0;
+  font-size: 17px;
+  color: var(--form-text);
+  display: block;
+}
+
+.formLogin input{
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--form-border);
+  border-radius: 5px;
+  height: 34px;
+  padding: 0 10px;
+  font: inherit;
+  color: var(--form-text);
+  transition: border-color var(--form-speed), box-shadow var(--form-speed);
+}
+
+.formLogin input:focus-visible{
+  outline: none;
+  border-color: var(--form-accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+
+.btnIngresar{
+  margin-top: 20px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--form-accent);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color var(--form-speed), box-shadow var(--form-speed), transform var(--form-speed);
+}
+
+.btnIngresar:hover:not(:disabled){
+  background: #4338ca;
+  box-shadow: 0 8px 18px -6px rgba(79, 70, 229, 0.55);
+  transform: translateY(-1px);
+}
+
+.btnIngresar:focus-visible{
+  outline: 2px solid var(--form-accent);
+  outline-offset: 3px;
+}
+
+.btnIngresar:disabled{
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+
+
+/* --> Bloque que muestra el mensaje y la imagen del código devuelto por la API */
+.respuesta{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px solid var(--form-border);
+  border-left-width: 4px;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.respuesta-exito{
+  border-left-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.respuesta-error{
+  border-left-color: #dc2626;
+  background: #fef2f2;
+}
+
+.respuesta-mensaje{
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--form-text);
+  overflow-wrap: anywhere;
+}
+
+.respuesta-imagen{
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+  .contenedorFormulario{
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+    margin: 24px auto;
+  }
+
+  .contenedorFormulario > .formulario-imagen{
+    width: 100%;
+    height: 200px;
+    border-top-left-radius: var(--form-radius);
+    border-top-right-radius: var(--form-radius);
+    border-bottom-left-radius: 0;
+  }
+
+  .formLogin{
+    width: 100%;
+    padding: 24px 20px 28px;
+  }
+
+  .formLogin h1{
+    font-size: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .formLogin input,
+  .btnIngresar {
+    transition: none;
+  }
+
+  .btnIngresar:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   --> Registro de usuario
+   Reutiliza la paleta, los radios y las transiciones ya definidas
+   en .contenedorFormulario y mantiene la misma escala tipográfica
+   que el encabezado y el pie de página.
+   ============================================================ */
+
+.contenedorFormulario--registro{
+  --form-accent-fuerte: #4338ca;
+  --form-accent-tenue: rgba(79, 70, 229, 0.08);
+  --form-soft: #f8fafc;
+  --form-ok: #16a34a;
+  --form-error: #dc2626;
+  --form-radio-chico: 10px;
+  /* --> Una sola variable reparte la tarjeta, así la imagen y el panel nunca se desalinean */
+  --form-lamina: 46%;
+  --form-panel: 54%;
+
+  width: 880px;
+  min-height: 540px;
+  margin: 48px auto 56px;
+  outline: 1px solid rgba(79, 70, 229, 0.10);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.10),
+    0 3px 8px -2px rgba(15, 23, 42, 0.12),
+    0 24px 48px -24px rgba(15, 23, 42, 0.28);
+}
+
+/* --> La imagen es una columna real del flex: si saliera del flujo, el panel se montaría encima */
+.contenedorFormulario--registro > .formulario-imagen{
+  flex: 0 0 var(--form-lamina);
+  align-self: stretch;
+  /* --> min-width evita que el ancho intrínseco de la foto (512px) le robe espacio al panel */
+  min-width: 0;
+  width: auto;
+  height: auto;
+}
+
+/* --> Lámina de la imagen con la marca, en el mismo índigo y slate del pie de página */
+.formulario-velo{
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+
+  width: var(--form-lamina);
+  padding: 32px 30px;
+
+  border-top-left-radius: var(--form-radius);
+  border-bottom-left-radius: var(--form-radius);
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0) 30%, rgba(15, 23, 42, 0.88) 100%),
+    radial-gradient(circle at 22% 14%, rgba(79, 70, 229, 0.55) 0%, rgba(79, 70, 229, 0) 62%);
+  color: #f8fafc;
+  pointer-events: none;
+}
+
+.formulario-marca{
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.formulario-leyenda{
+  margin: 0;
+  max-width: 24ch;
+  color: rgba(248, 250, 252, 0.80);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* --> El panel arranca justo donde termina la imagen y queda por encima de la lámina */
+.contenedorFormulario--registro .formLogin{
+  position: relative;
+  z-index: 2;
+  flex: 1 1 var(--form-panel);
+  justify-content: flex-start;
+  width: var(--form-panel);
+  padding: 40px 44px;
+}
+
+/* --> Etiqueta superior, con el mismo uppercase y tracking de .pie-titulo */
+.formulario-kicker{
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin: 0 0 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--form-accent-tenue);
+  color: var(--form-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.formRegistro h1{
+  margin: 0;
+  font-size: 1.9rem;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.formulario-bajada{
+  margin: 8px 0 0;
+  color: var(--form-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.formulario-acciones{
+  display: flex;
+  margin-top: 18px;
+}
+
+.formulario-alternar{
+  padding: 6px 12px;
+  border: 1px solid var(--form-border);
+  border-radius: 999px;
+  background: var(--form-surface);
+  color: var(--form-accent);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color var(--form-speed), border-color var(--form-speed), color var(--form-speed);
+}
+
+.formulario-alternar:hover{
+  background: var(--form-accent-tenue);
+  border-color: rgba(79, 70, 229, 0.35);
+}
+
+.formulario-alternar:focus-visible{
+  outline: 2px solid var(--form-accent);
+  outline-offset: 2px;
+}
+
+.formulario-campos{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.formulario-campo{
+  display: flex;
+  flex-direction: column;
+}
+
+.formRegistro .formulario-campo label{
+  margin: 0 0 6px;
+  color: var(--form-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.formRegistro .formulario-campo input{
+  height: 42px;
+  border-radius: var(--form-radio-chico);
+  background: var(--form-soft);
+  font-size: 0.95rem;
+}
+
+.formRegistro .formulario-campo input::placeholder{
+  color: #9ca3af;
+}
+
+.formRegistro .formulario-campo input:focus-visible{
+  background: var(--form-surface);
+}
+
+/* --> El mensaje de la API se apoya sobre la bajada, con el mismo bloque de las alertas */
+.formRegistro .respuesta{
+  margin-top: 18px;
+  text-align: left;
+}
+
+.formRegistro .respuesta-imagen{
+  max-width: 180px;
+  border: 1px solid var(--form-border);
+  background: var(--form-surface);
+}
+
+/* --> Campo marcado en rojo cuando la validación local o el servidor lo rechazan */
+.formulario-campo--invalido input{
+  border-color: var(--form-error);
+  background: #fef2f2;
+}
+
+.formulario-campo--invalido input:focus-visible{
+  border-color: var(--form-error);
+  background: var(--form-surface);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
+}
+
+.formulario-campo--invalido .formulario-ayuda{
+  color: var(--form-error);
+  font-weight: 600;
+}
+
+/* --> Medidor de fuerza de la contraseña */
+.formulario-fuerza{
+  margin-top: 8px;
+}
+
+.formulario-fuerza-barra{
+  display: flex;
+  gap: 4px;
+}
+
+.formulario-fuerza-segmento{
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--form-border);
+  transition: background-color var(--form-speed);
+}
+
+.formulario-fuerza-texto{
+  margin: 6px 0 0;
+  color: var(--form-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.formulario-fuerza-texto strong{
+  color: var(--form-text);
+  font-weight: 700;
+}
+
+/* --> Botón en estado de espera mientras la API responde */
+.formulario-cargando{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.formulario-spinner{
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: formulario-giro 700ms linear infinite;
+}
+
+@keyframes formulario-giro{
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.formulario-ayuda{
+  margin: 6px 0 0;
+  color: var(--form-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.formulario-ayuda--ok{
+  color: var(--form-ok);
+  font-weight: 600;
+}
+
+.formulario-ayuda--error{
+  color: var(--form-error);
+  font-weight: 600;
+}
+
+.formRegistro .btnIngresar{
+  width: 100%;
+  margin-top: 26px;
+  padding: 13px 20px;
+  border-radius: var(--form-radio-chico);
+}
+
+.formulario-nota{
+  margin: 18px 0 0;
+  color: var(--form-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.formulario-nota a{
+  display: inline-block;
+  padding-bottom: 1px;
+  border-bottom: 1px solid rgba(79, 70, 229, 0.35);
+  color: var(--form-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--form-speed), border-color var(--form-speed);
+}
+
+.formulario-nota a:hover{
+  color: var(--form-accent-fuerte);
+  border-color: var(--form-accent-fuerte);
+}
+
+.formulario-nota a:focus-visible{
+  outline: 2px solid var(--form-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .contenedorFormulario--registro .formLogin {
+    padding: 32px 28px;
+  }
+
+  .formulario-velo {
+    padding: 26px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .contenedorFormulario--registro {
+    min-height: 0;
+    margin: 24px auto 32px;
+  }
+
+  /* --> En columna la imagen pasa a ser una franja de alto fijo y la lámina se oculta */
+  .contenedorFormulario--registro > .formulario-imagen {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 200px;
+  }
+
+  /* --> La lámina de la marca se oculta cuando la imagen pasa a ser una franja superior */
+  .formulario-velo {
+    display: none;
+  }
+
+  .contenedorFormulario--registro .formLogin {
+    flex: 1 1 auto;
+    width: 100%;
+    padding: 28px 22px 32px;
+  }
+
+  .formulario-campos {
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .formulario-alternar,
+  .formulario-nota a,
+  .formulario-fuerza-segmento {
+    transition: none;
+  }
+
+  .formulario-spinner {
+    animation-duration: 1800ms;
+  }
+}
